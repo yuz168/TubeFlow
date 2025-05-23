@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= channel ? channel.author : 'チャンネルが見つかりません' %> - TubeFlow</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">TubeFlow</a></h1>
+        <form action="/search" method="GET">
+            <input type="text" name="q" placeholder="動画を検索...">
+            <button type="submit">検索</button>
+        </form>
+    </header>
+
+    <main>
+        <% if (channel) { %>
+            <div class="channel-header">
+                <% if (channel.authorThumbnails && channel.authorThumbnails.length > 0) { %>
+                    <img src="<%= channel.authorThumbnails[0].url %>" alt="<%= channel.author %>" class="channel-avatar">
+                <% } %>
+                <h2><%= channel.author %></h2>
+                <p class="subscribers"><%= channel.subscribers ? channel.subscribers + ' チャンネル登録者' : '' %></p>
+                <p class="description"><%= channel.description %></p>
+            </div>
+
+            <h3>チャンネルの動画</h3>
+            <div class="video-grid">
+                <% if (videos.length > 0) { %>
+                    <% videos.forEach(video => { %>
+                        <div class="video-item">
+                            <a href="/video?id=<%= video.videoId %>">
+                                <img src="<%= video.videoThumbnails ? video.videoThumbnails.find(t => t.quality === 'medium').url : '' %>" alt="<%= video.title %>">
+                                <h4><%= video.title %></h4>
+                            </a>
+                            <p class="views"><%= video.views ? video.views + ' 回視聴' : '' %></p>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>このチャンネルには動画がありません。</p>
+                <% } %>
+            </div>
+        <% } else { %>
+            <p>指定されたチャンネルは見つかりませんでした。</p>
+        <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 TubeFlow</p>
+    </footer>
+    <script src="/js/script.js"></script>
+</body>
+</html>
