@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= video ? video.title : '動画が見つかりません' %> - TubeFlow</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">TubeFlow</a></h1>
+        <form action="/search" method="GET">
+            <input type="text" name="q" placeholder="動画を検索...">
+            <button type="submit">検索</button>
+        </form>
+    </header>
+
+    <main>
+        <% if (video) { %>
+            <div class="video-player-container">
+                <video controls autoplay width="100%">
+                    <% /* videoStream は最も適切な形式を選択する必要があります */ %>
+                    <% const bestVideoStream = video.videoStreams.find(s => s.quality === '720p' || s.quality === '480p' || s.quality === '360p'); %>
+                    <source src="<%= bestVideoStream ? bestVideoStream.url : video.videoStreams[0].url %>" type="video/mp4">
+                    あなたのブラウザは動画タグをサポートしていません。
+                </video>
+                <h2><%= video.title %></h2>
+                <p class="author">
+                    <a href="/channel?id=<%= video.authorId %>"><%= video.author %></a>
+                </p>
+                <p class="views"><%= video.viewCount %> 回視聴 - <%= new Date(video.published * 1000).toLocaleDateString('ja-JP') %></p>
+                <div class="description">
+                    <p><%= video.description %></p>
+                </div>
+
+                <div class="comments-section">
+                    <h3>コメント (<%= comments.length %>)</h3>
+                    <% if (comments.length > 0) { %>
+                        <% comments.forEach(comment => { %>
+                            <div class="comment-item">
+                                <p><strong><%= comment.author %></strong></p>
+                                <p><%= comment.content %></p>
+                                <small><%= new Date(comment.publishedText).toLocaleDateString('ja-JP') %></small>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>コメントはありません。</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <aside class="related-videos">
+                <h3>関連動画</h3>
+                <div class="video-grid">
+                    <% if (relatedVideos.length > 0) { %>
+                        <% relatedVideos.forEach(relVideo => { %>
+                            <div class="video-item">
+                                <a href="/video?id=<%= relVideo.videoId %>">
+                                    <img src="<%= relVideo.videoThumbnails ? relVideo.videoThumbnails.find(t => t.quality === 'medium').url : '' %>" alt="<%= relVideo.title %>">
+                                    <h4><%= relVideo.title %></h4>
+                                </a>
+                                <p class="author">
+                                    <a href="/channel?id=<%= relVideo.authorId %>"><%= relVideo.author %></a>
+                                </p>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>関連動画が見つかりません。</p>
+                    <% } %>
+                </div>
+            </aside>
+        <% } else { %>
+            <p>指定された動画は見つかりませんでした。</p>
+        <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 TubeFlow</p>
+    </footer>
+    <script src="/js/script.js"></script>
+</body>
+</html>
