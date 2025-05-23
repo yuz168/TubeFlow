@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TubeFlow</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>TubeFlow</h1>
+        <form action="/search" method="GET">
+            <input type="text" name="q" placeholder="動画を検索..." value="<%= searchQuery %>">
+            <button type="submit">検索</button>
+        </form>
+    </header>
+
+    <main>
+        <% if (locals.searchResults && searchResults.length > 0) { %>
+            <h2>検索結果: "<%= searchQuery %>"</h2>
+            <div class="video-grid">
+                <% searchResults.forEach(video => { %>
+                    <div class="video-item">
+                        <a href="/video?id=<%= video.videoId %>">
+                            <img src="<%= video.videoThumbnails ? video.videoThumbnails.find(t => t.quality === 'medium').url : '' %>" alt="<%= video.title %>">
+                            <h3><%= video.title %></h3>
+                        </a>
+                        <p class="author">
+                            <a href="/channel?id=<%= video.authorId %>"><%= video.author %></a>
+                        </p>
+                        <p class="views"><%= video.views %> 回視聴</p>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else if (locals.trendingVideos && trendingVideos.length > 0) { %>
+            <h2>人気の動画</h2>
+            <div class="video-grid">
+                <% trendingVideos.forEach(video => { %>
+                    <div class="video-item">
+                        <a href="/video?id=<%= video.videoId %>">
+                            <img src="<%= video.videoThumbnails ? video.videoThumbnails.find(t => t.quality === 'medium').url : '' %>" alt="<%= video.title %>">
+                            <h3><%= video.title %></h3>
+                        </a>
+                        <p class="author">
+                            <a href="/channel?id=<%= video.authorId %>"><%= video.author %></a>
+                        </p>
+                        <p class="views"><%= video.views %> 回視聴</p>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>動画が見つかりませんでした。</p>
+        <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 TubeFlow</p>
+    </footer>
+    <script src="/js/script.js"></script>
+</body>
+</html>
